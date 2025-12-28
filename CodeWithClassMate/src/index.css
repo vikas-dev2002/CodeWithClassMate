@@ -1,0 +1,978 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Smooth scrolling for console */
+.scrollbar-smooth {
+  scroll-behavior: smooth;
+}
+
+.scrollbar-smooth::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-smooth::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.scrollbar-smooth::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.scrollbar-smooth::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* Dark mode scrollbar */
+.dark .scrollbar-smooth::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark .scrollbar-smooth::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+.dark .scrollbar-smooth::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Line clamp utility */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Animation utilities */
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slideInUp {
+  animation: slideInUp 0.4s ease-out;
+}
+
+/* Responsive text sizing utilities */
+.text-responsive-hero {
+  font-size: clamp(2rem, 8vw, 4rem);
+  line-height: 1.1;
+}
+
+.text-responsive-subtitle {
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  line-height: 1.2;
+}
+
+.text-responsive-body {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  line-height: 1.6;
+}
+
+/* Responsive viewport utilities */
+.min-h-screen-safe {
+  min-height: calc(100vh - 80px);
+}
+
+.h-screen-safe {
+  height: calc(100vh - 80px);
+}
+
+/* Container utilities for all devices */
+.container-responsive {
+  width: 100%;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Dark theme styles */
+.dark {
+  color-scheme: dark;
+}
+
+/* Light theme body */
+body {
+  background-color: #ffffff !important;
+  color: #111827;
+}
+
+.dark body {
+  background-color: #111827 !important;
+  color: #f9fafb;
+}
+
+/* Custom scrollbar for dark theme */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Code editor dark theme */
+.dark .code-editor {
+  background-color: #1f2937;
+  color: #f9fafb;
+  border-color: #374151;
+}
+
+/* Form inputs dark theme */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f9fafb;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Card backgrounds */
+.dark .bg-white {
+  background-color: #1f2937 !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #111827 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #374151 !important;
+}
+
+/* Text colors */
+.dark .text-gray-900 {
+  color: #f9fafb !important;
+}
+
+.dark .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+.dark .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+/* Border colors */
+.dark .border-gray-200 {
+  border-color: #374151 !important;
+}
+
+.dark .border-gray-300 {
+  border-color: #4b5563 !important;
+}
+
+/* Hover states */
+.dark .hover\:bg-gray-50:hover {
+  background-color: #374151 !important;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: #4b5563 !important;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari */
+}
+
+@keyframes blob-move {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-30px) scale(1.1); }
+}
+@keyframes blob-move2 {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(30px) scale(1.05); }
+}
+.animate-blob-move { animation: blob-move 8s ease-in-out infinite; }
+.animate-blob-move2 { animation: blob-move2 10s ease-in-out infinite; }
+
+/* WhatsApp light theme background */
+.whatsapp-light-bg {
+  background-image: url('/whatsapp-bg-light.png') !important;
+  background-size: 400px 400px !important;
+  background-position: center !important;
+  background-repeat: repeat !important;
+  background-color: #e5ddd5 !important;
+}
+
+/* WhatsApp dark theme background */
+.whatsapp-dark-bg {
+  background-image: url('/whatsapp-bg-dark.jpg') !important;
+  background-size: 400px 400px !important;
+  background-position: center !important;
+  background-repeat: repeat !important;
+  background-color: #0e1419 !important;
+}
+
+/* Custom scrollbar for chat areas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Animation for fade-in effect */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Markdown content styling for AI responses */
+.markdown-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  line-height: 1.6;
+  /* Prevent content truncation */
+  overflow: visible;
+  white-space: normal;
+}
+
+.markdown-content pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto;
+  max-width: 100%;
+  background: #f8f9fa !important;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px 0;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  /* Ensure code blocks don't break the layout */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.dark .markdown-content pre {
+  background: #1e1e1e !important;
+  border-color: #3e3e3e;
+  color: #d4d4d4;
+}
+
+.markdown-content code:not(pre code) {
+  background: #f1f3f4 !important;
+  color: #d73a49 !important;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  word-break: break-word;
+  /* Ensure inline code doesn't break layout */
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.dark .markdown-content code:not(pre code) {
+  background: #3e3e3e !important;
+  color: #79b8ff !important;
+}
+
+.markdown-content h1, 
+.markdown-content h2, 
+.markdown-content h3, 
+.markdown-content h4 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-content h1 { font-size: 1.5em; }
+.markdown-content h2 { font-size: 1.3em; }
+.markdown-content h3 { font-size: 1.1em; }
+
+.markdown-content p {
+  margin: 8px 0;
+  line-height: 1.6;
+}
+
+.markdown-content ul, 
+.markdown-content ol {
+  padding-left: 20px;
+  margin: 8px 0;
+}
+
+.markdown-content li {
+  margin: 4px 0;
+}
+
+.markdown-content blockquote {
+  margin: 12px 0;
+  padding: 8px 12px;
+  border-left: 4px solid #e1e4e8;
+  background: #f6f8fa;
+}
+
+.dark .markdown-content blockquote {
+  border-left-color: #3e3e3e;
+  background: #2d2d2d;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+/* Additional fixes for better markdown rendering */
+.markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+  overflow-x: auto;
+  display: block;
+  white-space: nowrap;
+}
+
+.markdown-content th, 
+.markdown-content td {
+  border: 1px solid #e1e4e8;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.dark .markdown-content th,
+.dark .markdown-content td {
+  border-color: #3e3e3e;
+}
+
+.markdown-content th {
+  background: #f6f8fa;
+  font-weight: 600;
+}
+
+.dark .markdown-content th {
+  background: #2d2d2d;
+}
+
+/* Better handling of code language detection */
+.markdown-content pre[class*="language-"] {
+  position: relative;
+}
+
+.markdown-content pre[class*="language-"]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Improve thinking animation */
+.thinking-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.thinking-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  opacity: 0.4;
+  animation: thinking-pulse 1.4s infinite ease-in-out;
+}
+
+.thinking-dots .dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.thinking-dots .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.thinking-dots .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes thinking-pulse {
+  0%, 80%, 100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Better handling of mixed markdown content */
+.markdown-content *:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-content *:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Ensure code blocks in AI responses don't break layout */
+.markdown-content pre code {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Handle cases where markdown parsing might create nested elements */
+.markdown-content code code {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* Better handling for mixed text and code in AI responses */
+.markdown-content p code,
+.markdown-content li code {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Handle malformed markdown content */
+.markdown-content {
+  /* Prevent content from breaking the layout */
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+/* Fix for broken markdown objects */
+.markdown-content [object] {
+  display: none;
+}
+
+/* Handle cases where AI might output malformed content */
+.markdown-content .malformed-content {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: #856404;
+  font-family: monospace;
+  white-space: pre-wrap;
+}
+
+.dark .markdown-content .malformed-content {
+  background: #4a4a4a;
+  border-color: #666;
+  color: #ffa726;
+}
+
+/* Ensure no content gets cut off due to markdown parsing */
+.markdown-content > * {
+  max-width: 100%;
+  overflow: visible;
+}
+
+/* Fix for incomplete markdown rendering */
+.markdown-content p:last-child,
+.markdown-content div:last-child {
+  margin-bottom: 0;
+  /* Ensure the last element is fully visible */
+  overflow: visible;
+}
+
+/* Ensure code blocks preserve all content including function names and values */
+.markdown-content pre code,
+.markdown-content code {
+  /* Prevent any content from being hidden or truncated */
+  text-overflow: visible !important;
+  overflow: visible !important;
+  white-space: pre-wrap !important;
+}
+
+/* Handle malformed code blocks that might be missing opening backticks */
+.markdown-content p:has(+ pre),
+.markdown-content *:has(+ pre) {
+  /* If text appears right before a code block, ensure it's visible */
+  overflow: visible !important;
+}
+
+/* Better handling of AI response containers */
+.ai-response-container {
+  max-width: 100%;
+  overflow: visible; /* Changed from hidden to visible to prevent content truncation */
+  word-wrap: break-word;
+  /* Ensure content is fully displayed */
+  min-height: auto;
+}
+
+/* Improve code block rendering in AI responses */
+.markdown-content pre {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-height: 400px;
+}
+
+.markdown-content pre::-webkit-scrollbar {
+  height: 8px;
+}
+
+.markdown-content pre::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.dark .markdown-content pre::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.dark .markdown-content pre::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+.dark .markdown-content pre::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+/* Rapid Fire Animations */
+@keyframes rapid-pulse {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg); 
+    opacity: 0.6; 
+  }
+  50% { 
+    transform: scale(1.2) rotate(180deg); 
+    opacity: 1; 
+  }
+}
+
+@keyframes rapid-float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+    opacity: 0.4; 
+  }
+  50% { 
+    transform: translateY(-20px) rotate(180deg); 
+    opacity: 0.8; 
+  }
+}
+
+.rapid-fire-dark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.rapid-fire-light {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Responsive fixes for tablet and foldable devices */
+@media screen and (max-width: 999px) {
+  /* Surface Duo and tablet optimizations */
+  .hero-carousel {
+    min-height: 250px !important;
+    max-height: 400px !important;
+  }
+  
+  /* Ensure proper scaling on tablet devices */
+  .hero-grid {
+    gap: 1rem !important;
+    padding: 1rem !important;
+  }
+  
+  /* Fix text scaling on smaller tablets */
+  .hero-title {
+    font-size: clamp(1.5rem, 4vw, 3rem) !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Improve button spacing on mobile */
+  .hero-buttons {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+}
+
+/* Surface Duo specific fixes */
+@media screen and (max-width: 720px) and (min-height: 480px) {
+  .carousel-container {
+    height: clamp(200px, 35vh, 300px) !important;
+  }
+  
+  .hero-content {
+    padding: 1rem !important;
+  }
+  
+  /* Ensure algorithm cards fit properly */
+  .algorithm-card {
+    width: 280px !important;
+    height: 220px !important;
+  }
+}
+
+/* Extra small devices optimization */
+@media screen and (max-width: 480px) {
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  
+  .algorithm-card {
+    width: calc(100vw - 2rem) !important;
+    max-width: 320px !important;
+  }
+}
+
+/* TiptapEditor Styles */
+.ProseMirror {
+  outline: none !important;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  -webkit-user-modify: read-write-plaintext-only;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  cursor: text;
+  caret-color: currentColor;
+}
+
+.ProseMirror:focus {
+  outline: none !important;
+}
+
+.tiptap-editor {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.tiptap-editor .ProseMirror {
+  min-height: 500px;
+  padding: 0 !important;
+  outline: none !important;
+}
+
+.ProseMirror p {
+  margin: 1rem 0;
+  line-height: 1.6;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ProseMirror h1 { font-size: 2em; }
+.ProseMirror h2 { font-size: 1.5em; }
+.ProseMirror h3 { font-size: 1.17em; }
+.ProseMirror h4 { font-size: 1em; }
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding-left: 2rem;
+  margin: 1rem 0;
+}
+
+.ProseMirror li {
+  margin: 0.5rem 0;
+}
+
+.ProseMirror blockquote {
+  padding-left: 1rem;
+  margin: 1rem 0;
+  border-left: 4px solid #ccc;
+  color: #666;
+}
+
+.dark .ProseMirror blockquote {
+  border-left-color: #999;
+  color: #ccc;
+}
+
+.ProseMirror pre {
+  background-color: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.dark .ProseMirror pre {
+  background-color: #1f2937;
+}
+
+.ProseMirror code {
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.dark .ProseMirror code {
+  background-color: #2d3748;
+}
+
+.ProseMirror pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.ProseMirror table {
+  border-collapse: collapse;
+  margin: 1rem 0;
+  width: 100%;
+}
+
+.ProseMirror table th,
+.ProseMirror table td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+}
+
+.dark .ProseMirror table th,
+.dark .ProseMirror table td {
+  border-color: #666;
+}
+
+.ProseMirror table th {
+  background-color: #f9fafb;
+  font-weight: 700;
+}
+
+.dark .ProseMirror table th {
+  background-color: #374151;
+}
+
+/* Make content editable and allow paste */
+.ProseMirror[contenteditable="true"] {
+  -webkit-user-modify: read-write;
+  user-modify: read-write;
+}
+
+/* Selection color */
+.ProseMirror ::selection {
+  background-color: rgba(59, 130, 246, 0.3);
+}
+
+.dark .ProseMirror ::selection {
+  background-color: rgba(96, 165, 250, 0.3);
+}
+
+
+
+
+
+/* 
+
+
+
+@import "tailwindcss";
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+/* Step 1: Animation define karo */
+
+
+/* Step 2: Animation apply karo */
+
+
+
+
+
+
+
+.binary {
+  animation: SearchAni1 1s ease-out, gradientMove 8s ease infinite;
+  animation-timeline: view(), auto;
+  animation-range: entry 0% cover 50%;
+  /* background: linear-gradient(-45deg, #6a11cb, #6696e8, #ff6ec4, #33f594,0.3);
+  background-size: 400% 400%; */
+  background: linear-gradient(
+  -45deg,
+  rgba(106, 17, 203, 0.2),
+  rgba(102, 150, 232, 0.2),
+  rgba(255, 110, 196, 0.2),
+  rgba(51, 245, 148, 0.2)
+);
+
+background-size: 400% 400%;
+}
+
+
+
+
+@keyframes SearchAni1 {
+  from {
+    opacity: 0;
+    transform: translate3d(-279px, 0, 0) scale(0.4);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
