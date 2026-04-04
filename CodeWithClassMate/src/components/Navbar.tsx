@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
-import { 
-  Code, 
-  Menu, 
-  X, 
-  User, 
-  LogOut, 
-  Shield, 
-  Moon, 
-  Sun, 
+import {
+  CalendarDays,
+  Menu,
+  X,
+  User,
+  LogOut,
+  Shield,
+  Moon,
+  Sun,
   Coins,
   Flame,
   ChevronDown
@@ -34,11 +34,9 @@ const Navbar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/problems', label: 'Problems' },
+    { path: '/events', label: 'Events' },
     { path: '/top', label: 'Discuss' },
-    { path: '/contest', label: 'Contest' },
-    { path: '/game', label: 'Game' },
-    { path: '/interview', label: 'Interview' },
+    { path: '/announcements', label: 'Announcements' },
     { path: '/chats', label: 'Chat' }
   ];
 
@@ -66,12 +64,12 @@ const Navbar: React.FC = () => {
             className="flex items-center space-x-2 group"
           >
             <div className="p-1.5 rounded-lg bg-gradient-to-br from-orange-600 to-orange-700">
-              <Code className="h-5 w-5 text-white" />
+              <CalendarDays className="h-5 w-5 text-white" />
             </div>
             <span className={`text-xl font-bold ${
               isDark ? 'text-white' : 'text-gray-900'
             }`}>
-              CodeWithClassMate
+              EventHub
             </span>
           </Link>
 
@@ -232,7 +230,7 @@ const Navbar: React.FC = () => {
                   to="/register"
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200"
                 >
-                  Start Learning →
+                  Get Started →
                 </Link>
               </div>
             )}
@@ -271,9 +269,9 @@ const Navbar: React.FC = () => {
                   className="flex items-center space-x-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Code className="h-8 w-8 text-blue-600" />
+                  <CalendarDays className="h-8 w-8 text-orange-600" />
                   <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    CodeWithClassMate
+                    EventHub
                   </span>
                 </Link>
                 <button
@@ -390,7 +388,7 @@ const Navbar: React.FC = () => {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="block w-full px-4 py-3 text-center text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
                   >
-                    Start Learning →
+                    Get Started →
                   </Link>
                 </div>
               )}

@@ -31,6 +31,8 @@ import { updateContestStatusesAndRatings } from "./routes/contest-status-updater
 console.log("🚀 Starting backend server...")
 import statsRouter from "./routes/stats.js"
 import documentRoutes from "./routes/documents.js"
+import eventRoutes from "./routes/events.js"
+import collegeRoutes from "./routes/colleges.js"
 
 // Load environment variables
 console.log("✅ Environment variables loaded")
@@ -152,6 +154,12 @@ console.log("✅ Stats routes mounted at /api/stats")
 
 app.use("/api/documents", documentRoutes)
 console.log("✅ Document routes mounted at /api/documents")
+
+app.use("/api/events", eventRoutes)
+console.log("✅ Event routes mounted at /api/events")
+
+app.use("/api/colleges", collegeRoutes)
+console.log("✅ College routes mounted at /api/colleges")
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

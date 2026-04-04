@@ -10,9 +10,12 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+  console.log('⚠️ Google OAuth not configured - skipping Google strategy (set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env)');
+} else {
 passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID, // Set in your .env
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Set in your .env
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.NODE_ENV === 'production' 
     ? 'https://codestar-qlq6.onrender.com/api/auth/google/callback'
     : 'https://codestar-qlq6.onrender.com/api/auth/google/callback',
@@ -68,3 +71,4 @@ passport.use(new GoogleStrategy({
     return done(err, null);
   }
 }));
+} // end of Google OAuth conditional

@@ -31,10 +31,28 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['admin', 'user'],
+    enum: ['admin', 'user', 'organiser'],
     default: 'user'
   },
   googleId: { type: String, unique: true, sparse: true },
+
+  // Event Management Fields
+  rollNo: { type: String, sparse: true, trim: true },
+  college: { type: mongoose.Schema.Types.ObjectId, ref: 'College' },
+  branch: {
+    type: String,
+    enum: ['CSE', 'ECE', 'EEE', 'ME', 'CE', 'IT', 'AIML', 'Other', ''],
+    default: ''
+  },
+  year: { type: Number, min: 1, max: 4 },
+
+  // Events registered by this user
+  registeredEvents: [{
+    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Event' },
+    qrCode: String,
+    attended: { type: Boolean, default: false },
+    attendedAt: Date
+  }],
 
   // Profile Data
   profile: {

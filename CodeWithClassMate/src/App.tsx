@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import Navbar from "./components/Navbar";
+// Home page is now Events - keeping import for /home legacy route
 import Home from "./pages/Home";
 import Problems from "./pages/Problems";
 import ProblemDetail from "./pages/ProblemDetail";
@@ -32,17 +33,20 @@ import RapidFireLeaderboard from "./pages/RapidFireLeaderboard";
 import SubjectDocuments from "./pages/SubjectDocuments";
 import AddDocument from "./pages/AddDocument";
 import ViewDocument from "./pages/ViewDocument";
+import Events from "./pages/Events";
+import EventDetail from "./pages/EventDetail";
+import CreateEvent from "./pages/CreateEvent";
 import { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 
 // Move loading logic to a wrapper component
 const tips = [
-  "Tip 1: Solve problems daily to build consistency.",
-  "Tip 2: Write clean and readable code.",
-  "Tip 3: Debug systematically, not randomly.",
-  "Tip 4: Learn by explaining your solution.",
-  "Tip 5: Focus on time and space optimization.",
+  "Tip: Explore coding contests and hackathons near you!",
+  "Tip: Register early — popular events fill up fast.",
+  "Tip: Challenge friends to 1v1 coding battles in coding events!",
+  "Tip: Attend events to earn certificates and boost your profile.",
+  "Tip: Use the QR code for quick attendance check-in.",
 ];
 
 const AppRoutes = () => {
@@ -68,7 +72,7 @@ const AppRoutes = () => {
             />
           </div>
           <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
-            Loading <span className="text-orange-600">CodeWithClassMate</span>
+            Loading <span className="text-orange-600">EventHub</span>
             ...
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
@@ -487,7 +491,8 @@ const AppRoutes = () => {
         <Navbar />
         <div className="pt-0 relative z-10">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Events />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/problems" element={<Problems />} />
@@ -610,6 +615,16 @@ const AppRoutes = () => {
               element={
                 <ProtectedRoute>
                   <ViewDocument />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/events" element={<Events />} />
+            <Route path="/events/:id" element={<EventDetail />} />
+            <Route
+              path="/events/create"
+              element={
+                <ProtectedRoute>
+                  <CreateEvent />
                 </ProtectedRoute>
               }
             />

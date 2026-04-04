@@ -22,7 +22,7 @@ router.post('/register', async (req, res) => {
   console.log('📝 Registration attempt started');
   console.log('📊 Request body:', { ...req.body, password: '[HIDDEN]' });
   try {
-    const { username, email, password, role = 'user', googleId } = req.body;
+    const { username, email, password, role = 'user', googleId, rollNo, college, branch, year } = req.body;
     console.log('🔍 Checking for existing user...');
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     console.log('🔍 Existing user query result:', existingUser);
@@ -38,6 +38,11 @@ router.post('/register', async (req, res) => {
       role,
       googleId: googleId || undefined,
       coins: 0,
+      // Event management fields
+      rollNo: rollNo || undefined,
+      college: college || undefined,
+      branch: branch || '',
+      year: year || undefined,
       profile: {
         firstName: '',
         lastName: '',
@@ -121,7 +126,7 @@ router.post('/login', async (req, res) => {
     }
 
     // Check role
-    if (user.role !== "user" && user.role !== "admin") {
+    if (user.role !== "user" && user.role !== "admin" && user.role !== "organiser") {
       console.log('❌ Role not allowed for user:', user.username, 'Actual:', user.role);
       return res.status(400).json({ message: 'Invalid credentials or insufficient permissions' });
     }
