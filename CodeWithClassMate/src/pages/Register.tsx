@@ -342,7 +342,7 @@ const Register: React.FC = () => {
               </div>
             </div>
             <h2 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-              Join CodeThrone
+              Join EvenEase
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400">
               Create your account and start coding

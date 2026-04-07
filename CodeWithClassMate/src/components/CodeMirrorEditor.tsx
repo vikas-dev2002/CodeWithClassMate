@@ -873,10 +873,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({
     if (contestMode) {
       extensions.push(
         EditorView.domEventHandlers({
-          paste: () => {
-            alert('Pasting is disabled in contest mode!');
-            return true; // Prevent default paste
-          },
+          paste: () => false,
           contextmenu: () => {
             return true; // Disable right-click menu
           }
@@ -1030,10 +1027,7 @@ const CodeMirrorEditor: React.FC<CodeMirrorEditorProps> = ({
         if (contestMode) {
           extensions.push(
             EditorView.domEventHandlers({
-              paste: () => {
-                alert('Pasting is disabled in contest mode!');
-                return true;
-              },
+              paste: () => false,
               contextmenu: () => {
                 return true;
               }

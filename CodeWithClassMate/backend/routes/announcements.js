@@ -4,6 +4,25 @@ import { authenticateToken, requireAdmin } from "../middleware/auth.js"
 
 const router = express.Router()
 
+const requireAdminOrOrganiser = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" })
+  }
+
+  if (req.user.role === "admin") {
+    return next()
+  }
+
+  if (req.user.role === "organiser") {
+    if (!req.user.college) {
+      return res.status(403).json({ message: "Organiser must be linked to a college" })
+    }
+    return next()
+  }
+
+  return res.status(403).json({ message: "Not authorized to create announcement" })
+}
+
 // Get all active announcements
 router.get("/", async (req, res) => {
   console.log("📢 Get announcements request")
@@ -31,8 +50,8 @@ router.get("/", async (req, res) => {
   }
 })
 
-// Admin: Create announcement
-router.post("/", authenticateToken, requireAdmin, async (req, res) => {
+// Admin or organiser: Create announcement
+router.post("/", authenticateToken, requireAdminOrOrganiser, async (req, res) => {
   console.log("📝 Create announcement request")
   console.log("📊 Request body:", req.body)
   console.log("👤 User from middleware:", req.user?.username, "Role:", req.user?.role)

@@ -498,17 +498,8 @@ const ProblemDetail: React.FC = () => {
   }, [tabSwitchCount])
 
   useEffect(() => {
-    // Anti-cheat: Prevent pasting
-    const preventPaste = (e: Event) => {
-      e.preventDefault()
-      alert("Pasting is not allowed in coding challenges!")
-    }
-
-    const textarea = textareaRef.current
-    if (textarea) {
-      textarea.addEventListener("paste", preventPaste)
-      return () => textarea.removeEventListener("paste", preventPaste)
-    }
+    // Paste is temporarily allowed for testing flow.
+    return undefined
   }, [])
 
   const fetchProblem = async () => {

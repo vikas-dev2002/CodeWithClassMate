@@ -1,5 +1,5 @@
 {
-  "name": "competitive-programming-platform",
+  "name": "event-ease-ai-powered-college-event-management-system",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -81,7 +81,7 @@
     "typescript-eslint": "^8.3.0",
     "vite": "^6.3.5"
   },
-  "description": "Welcome to **CodeThrone**, a comprehensive platform designed to enhance coding, collaboration, and learning through interactive contests, discussions, and real-time chat features. This project is built with modern web technologies and follows best practices for scalability, maintainability, and user experience.",
+  "description": "Event-Ease AI Powered College Event Management System (EvenEase) streamlines event creation, registration, communication, certificates, dashboards, and analytics.",
   "main": "eslint.config.js",
   "keywords": [],
   "author": "",

@@ -103,7 +103,7 @@ const Certificate: React.FC<CertificateProps> = ({ certificateData, onDownload }
     // Footer
     ctx.fillStyle = '#e2e8f0';
     ctx.font = '16px Arial, sans-serif';
-    ctx.fillText('Presented by CodeArena Platform', canvas.width / 2, 720);
+    ctx.fillText('Presented by EvenEase Platform', canvas.width / 2, 720);
     ctx.fillText('Excellence in Competitive Programming', canvas.width / 2, 750);
 
     // Download

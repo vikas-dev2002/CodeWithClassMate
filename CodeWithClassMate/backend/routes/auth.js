@@ -22,7 +22,28 @@ router.post('/register', async (req, res) => {
   console.log('📝 Registration attempt started');
   console.log('📊 Request body:', { ...req.body, password: '[HIDDEN]' });
   try {
-    const { username, email, password, role = 'user', googleId, rollNo, college, branch, year } = req.body;
+    const {
+      username,
+      email,
+      password,
+      role = 'user',
+      googleId,
+      rollNo,
+      college,
+      branch,
+      year,
+      profile = {}
+    } = req.body;
+    const normalizedRole = role === 'organiser' ? 'organiser' : role === 'admin' ? 'admin' : 'user';
+    if (normalizedRole === 'admin') {
+      return res.status(403).json({ message: 'Admin accounts can only be created by an existing admin.' });
+    }
+    if (normalizedRole === 'user' && (!college || !rollNo || !branch || !year)) {
+      return res.status(400).json({ message: 'Student registration requires college, roll number, branch, and year.' });
+    }
+    if (normalizedRole === 'organiser' && !college) {
+      return res.status(400).json({ message: 'Organiser registration requires a college selection.' });
+    }
     console.log('🔍 Checking for existing user...');
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     console.log('🔍 Existing user query result:', existingUser);
@@ -35,24 +56,24 @@ router.post('/register', async (req, res) => {
       username,
       email,
       password: googleId ? undefined : password,
-      role,
+      role: normalizedRole,
       googleId: googleId || undefined,
       coins: 0,
       // Event management fields
-      rollNo: rollNo || undefined,
+      rollNo: normalizedRole === 'user' ? rollNo || undefined : undefined,
       college: college || undefined,
-      branch: branch || '',
-      year: year || undefined,
+      branch: normalizedRole === 'user' ? branch || '' : '',
+      year: normalizedRole === 'user' ? year || undefined : undefined,
       profile: {
-        firstName: '',
-        lastName: '',
+        firstName: profile.firstName || '',
+        lastName: profile.lastName || '',
         linkedIn: '',
         github: '',
         avatar: `default:${username.charAt(0).toUpperCase()}`,
         bio: '',
         location: '',
-        college: '',
-        branch: '',
+        college: profile.college || '',
+        branch: normalizedRole === 'user' ? (branch || '') : '',
         graduationYear: null
       }
     };
@@ -130,6 +151,9 @@ router.post('/login', async (req, res) => {
       console.log('❌ Role not allowed for user:', user.username, 'Actual:', user.role);
       return res.status(400).json({ message: 'Invalid credentials or insufficient permissions' });
     }
+    if (role && user.role !== role) {
+      return res.status(400).json({ message: `This account is registered as ${user.role}. Please choose the correct role.` });
+    }
 
     console.log('✅ User found:', user.username);
     console.log('🔒 Checking password...');
@@ -181,6 +205,7 @@ router.get('/me', authenticateToken, async (req, res) => {
 
   try {
     const user = await User.findById(req.user._id)
+      .populate('college', 'name city state code logo')
       .select('-password'); // Remove .lean() to allow saving
 
     if (!user) 
@@ -290,29 +315,13 @@ router.get('/me', authenticateToken, async (req, res) => {
 });
 
 
-// --- Google OAuth2 routes ---
-router.get('/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
+// Google OAuth is temporarily disabled.
+router.get('/google', async (req, res) => {
+  res.status(503).json({ message: 'Google login is temporarily disabled. Please use the login form.' });
+});
 
-router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login', session: false }),
-  async (req, res) => {
-    // Successful authentication, issue JWT and redirect or respond
-    const user = req.user;
-    // Ensure user object has all required fields for frontend
-    const token = jwt.sign(
-      { userId: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-    // Redirect to frontend (production or development)
-    const frontendUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://codethrone.netlify.app'
-      : 'https://codethrone.netlify.app';
-    res.redirect(`${frontendUrl}/oauth?token=${encodeURIComponent(token)}`);
-    // Or: res.json({ token, user });
-  }
-);
+router.get('/google/callback', async (req, res) => {
+  res.status(503).json({ message: 'Google login is temporarily disabled. Please use the login form.' });
+});
 
 export default router;

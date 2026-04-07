@@ -193,8 +193,8 @@ nums2.length == n
 
     // Create sample announcement
     const announcement = new Announcement({
-      title: 'Welcome to CodeArena!',
-      content: 'Start solving problems and improve your coding skills. Join contests and compete with other programmers!',
+      title: 'Welcome to EvenEase!',
+      content: 'Start exploring events, register faster, and manage college activities from one smart platform!',
       type: 'general',
       priority: 'high',
       createdBy: adminUser._id

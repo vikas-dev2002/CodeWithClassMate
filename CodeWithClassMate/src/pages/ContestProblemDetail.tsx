@@ -223,31 +223,8 @@ const ContestProblemDetail: React.FC = () => {
   }, [tabSwitchCount])
 
   useEffect(() => {
-    // Anti-cheat: Prevent pasting, copying, and right-click specifically on the editor area
-    const preventActions = (e: Event) => {
-      e.preventDefault()
-      alert("Copy/paste operations are not allowed in contest mode!")
-    }
-
-    const preventRightClick = (e: MouseEvent) => {
-      e.preventDefault()
-      alert("Right-click is disabled in contest mode!")
-    }
-
-    const editorElement = editorRef.current;
-    if (editorElement) {
-      editorElement.addEventListener("paste", preventActions);
-      editorElement.addEventListener("copy", preventActions);
-      editorElement.addEventListener("cut", preventActions);
-      editorElement.addEventListener("contextmenu", preventRightClick);
-
-      return () => {
-        editorElement.removeEventListener("paste", preventActions);
-        editorElement.removeEventListener("copy", preventActions);
-        editorElement.removeEventListener("cut", preventActions);
-        editorElement.removeEventListener("contextmenu", preventRightClick);
-      };
-    }
+    // Paste is temporarily allowed for testing flow.
+    return undefined;
   }, []);
 
   const fetchContest = async () => {

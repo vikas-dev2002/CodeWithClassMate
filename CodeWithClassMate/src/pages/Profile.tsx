@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { User, Github, Linkedin, Trophy, Code, TrendingUp, Award, Star, Target, Zap, Activity, CheckCircle } from 'lucide-react';
+import { User, Github, Linkedin, Trophy, Code, TrendingUp, Award, Star, Target, Zap, Activity, CheckCircle, CalendarDays, Building2, Shield, Users } from 'lucide-react';
 import { API_URL, SOCKET_URL } from "../config/api";
 import SubmissionCalendar from '../components/SubmissionCalendar';
 import { showError, showSuccess } from '../utils/toast';
@@ -162,6 +162,15 @@ interface UserProfile {
   email: string;
   role: string;
   totalProblemsCount?: number; // Add this field
+  college?: {
+    _id?: string;
+    name?: string;
+    city?: string;
+    state?: string;
+    code?: string;
+    logo?: string;
+  } | null;
+  roleSummary?: Record<string, any> | null;
   profile: {
     firstName: string;
     lastName: string;
@@ -305,6 +314,8 @@ const Profile: React.FC = () => {
         email: profileData.email || '',
         role: profileData.role || 'user',
         totalProblemsCount: profileData.totalProblemsCount || 100, // Default fallback
+        college: profileData.college || null,
+        roleSummary: profileData.roleSummary || null,
         profile: {
           firstName: profileData.profile?.firstName || '',
           lastName: profileData.profile?.lastName || '',
@@ -466,6 +477,31 @@ const Profile: React.FC = () => {
   }
 
   const isOwnProfile = user?.username === profile.username;
+  const collegeName = profile.college?.name || profile.profile.college || 'Not set';
+  const roleLabel = profile.role === 'admin' ? 'Admin' : profile.role === 'organiser' ? 'Organiser' : 'Student';
+  const roleAccent = profile.role === 'admin'
+    ? 'from-violet-500 to-fuchsia-500'
+    : profile.role === 'organiser'
+      ? 'from-emerald-500 to-teal-500'
+      : 'from-blue-500 to-cyan-500';
+  const roleCards = profile.role === 'admin'
+    ? [
+        { label: 'Colleges', value: profile.roleSummary?.totalColleges || 0, icon: Building2 },
+        { label: 'Organisers', value: profile.roleSummary?.totalOrganisers || 0, icon: Users },
+        { label: 'Events', value: profile.roleSummary?.totalEvents || 0, icon: CalendarDays },
+      ]
+    : profile.role === 'organiser'
+      ? [
+          { label: 'Managed Events', value: profile.roleSummary?.managedEventsCount || 0, icon: CalendarDays },
+          { label: 'College Events', value: profile.roleSummary?.collegeEventsCount || 0, icon: Building2 },
+          { label: 'Registrations', value: profile.roleSummary?.totalRegistrationsManaged || 0, icon: Users },
+        ]
+      : [
+          { label: 'Registered Events', value: profile.roleSummary?.registeredEventsCount || 0, icon: CalendarDays },
+          { label: 'Attended', value: profile.roleSummary?.attendedEventsCount || 0, icon: CheckCircle },
+          { label: 'Certificates', value: profile.roleSummary?.certificateEligibleCount || 0, icon: Award },
+        ];
+  const showCodingDashboard = profile.role === 'user';
 
   return (
     <div className={`min-h-screen transition-colors duration-300 relative ${
@@ -786,6 +822,70 @@ const Profile: React.FC = () => {
       
       <div className="relative z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className={`mb-8 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r ${roleAccent} p-[1px] shadow-2xl`}>
+          <div className={`rounded-[calc(1.5rem-1px)] px-6 py-6 ${isDark ? 'bg-slate-900/95' : 'bg-white/95'}`}>
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+              <div>
+                <div className="mb-3 inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-200 dark:bg-white/10 dark:text-slate-200">
+                  {roleLabel} Profile
+                </div>
+                <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{profile.roleSummary?.dashboardTitle || `${roleLabel} dashboard`}</h1>
+                <p className={`mt-2 max-w-3xl text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                  {profile.role === 'admin'
+                    ? 'Manage colleges, organisers, and platform-wide event operations from one place.'
+                    : profile.role === 'organiser'
+                      ? 'You can manage events for your college, keep registrations in check, and coordinate event operations.'
+                      : 'Track your registrations, attendance, certificates, and event participation here.'}
+                </p>
+                <div className={`mt-4 flex flex-wrap items-center gap-3 text-sm ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1">
+                    <Building2 className="h-4 w-4" />
+                    {collegeName}
+                  </span>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1">
+                    {profile.role === 'admin' ? <Shield className="h-4 w-4" /> : <User className="h-4 w-4" />}
+                    {roleLabel}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {profile.role === 'organiser' && (
+                  <>
+                    <button onClick={() => navigate('/events/create')} className="rounded-2xl bg-emerald-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-600">
+                      Create Event
+                    </button>
+                    <button onClick={() => navigate('/events')} className={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${isDark ? 'bg-white/10 text-white hover:bg-white/20' : 'bg-slate-100 text-slate-800 hover:bg-slate-200'}`}>
+                      Manage College Events
+                    </button>
+                  </>
+                )}
+                {profile.role === 'admin' && (
+                  <button onClick={() => navigate('/admin')} className="rounded-2xl bg-violet-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-violet-600">
+                    Open Admin Dashboard
+                  </button>
+                )}
+                {profile.role === 'user' && (
+                  <button onClick={() => navigate('/events')} className="rounded-2xl bg-blue-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-600">
+                    Browse Events
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {roleCards.map(({ label, value, icon: Icon }) => (
+                <div key={label} className={`rounded-2xl border px-5 py-4 ${isDark ? 'border-white/10 bg-white/5' : 'border-slate-200 bg-slate-50'}`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`text-sm ${isDark ? 'text-slate-300' : 'text-slate-500'}`}>{label}</span>
+                    <Icon className={`h-4 w-4 ${isDark ? 'text-slate-300' : 'text-slate-500'}`} />
+                  </div>
+                  <div className={`mt-3 text-3xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    <AnimatedCounter end={Number(value) || 0} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Profile Sidebar */}
           <div className="lg:col-span-1">
@@ -1011,53 +1111,55 @@ const Profile: React.FC = () => {
               )}
             </div>
             
-            {/* Ratings */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ratings & Ranks</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Trophy className="h-5 w-5 text-yellow-600 mr-2" />
-                    <span className="text-gray-700">Game Rating</span>
+            {showCodingDashboard && (
+              <>
+                {/* Ratings */}
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Ratings & Ranks</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Trophy className="h-5 w-5 text-yellow-600 mr-2" />
+                        <span className="text-gray-700">Game Rating</span>
+                      </div>
+                      <span className="font-bold text-blue-600">{profile.ratings.gameRating}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Zap className="h-5 w-5 text-red-600 mr-2" />
+                        <span className="text-gray-700">Rapid Fire Rating</span>
+                      </div>
+                      <span className="font-bold text-red-600">{profile.ratings.rapidFireRating}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Award className="h-5 w-5 text-purple-600 mr-2" />
+                        <span className="text-gray-700">Contest Rating</span>
+                      </div>
+                      <span className="font-bold text-purple-600">{profile.ratings.contestRating}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <TrendingUp className="h-5 w-5 text-green-600 mr-2" />
+                        <span className="text-gray-700">Global Rank</span>
+                      </div>
+                      <span className="font-bold text-green-600">
+                        {profile.ratings.globalRank || 'Unranked'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Star className="h-5 w-5 text-orange-600 mr-2" />
+                        <span className="text-gray-700">Percentile</span>
+                      </div>
+                      <span className="font-bold text-orange-600">
+                        {profile.ratings.percentile ? `${profile.ratings.percentile}%` : 'N/A'}
+                      </span>
+                    </div>
                   </div>
-                  <span className="font-bold text-blue-600">{profile.ratings.gameRating}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Zap className="h-5 w-5 text-red-600 mr-2" />
-                    <span className="text-gray-700">Rapid Fire Rating</span>
-                  </div>
-                  <span className="font-bold text-red-600">{profile.ratings.rapidFireRating}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Award className="h-5 w-5 text-purple-600 mr-2" />
-                    <span className="text-gray-700">Contest Rating</span>
-                  </div>
-                  <span className="font-bold text-purple-600">{profile.ratings.contestRating}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <TrendingUp className="h-5 w-5 text-green-600 mr-2" />
-                    <span className="text-gray-700">Global Rank</span>
-                  </div>
-                  <span className="font-bold text-green-600">
-                    {profile.ratings.globalRank || 'Unranked'}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Star className="h-5 w-5 text-orange-600 mr-2" />
-                    <span className="text-gray-700">Percentile</span>
-                  </div>
-                  <span className="font-bold text-orange-600">
-                    {profile.ratings.percentile ? `${profile.ratings.percentile}%` : 'N/A'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          <div className="pt-6"></div>
-            <div className="mb-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                <div className="pt-6"></div>
+                <div className="mb-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
               <div className="p-6 pb-2">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center">
                   <Trophy className="h-5 w-5 mr-2 text-yellow-500" />
@@ -1201,19 +1303,23 @@ const Profile: React.FC = () => {
                     </div>
                   )}
                 </div>
+                </div>
               </div>
-            </div>
+              </>
+            )}
           </div>
 
           
           {/* Main Content */}
           <div className="lg:col-span-2">
-            {/* Enhanced Interactive Dashboard */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
-                <TrendingUp className="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" />
-                Performance Dashboard
-              </h3>
+            {showCodingDashboard ? (
+              <div>
+                {/* Enhanced Interactive Dashboard */}
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
+                    <TrendingUp className="h-6 w-6 mr-2 text-blue-600 dark:text-blue-400" />
+                    Performance Dashboard
+                  </h3>
               
               {/* Main Stats Grid with Animations */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -1632,7 +1738,52 @@ const Profile: React.FC = () => {
                   )}
                 </div>
               </div>
+              </div>
             </div>
+            ) : (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                  {profile.role === 'organiser' ? 'Organiser Overview' : 'Admin Overview'}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-5">
+                  Coding performance dashboard only students ke liye visible hai. Aapke role ke liye event operations summary upar dikh rahi hai.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {profile.role === 'organiser' && (
+                    <>
+                      <button
+                        onClick={() => navigate('/events')}
+                        className="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white py-2.5 font-medium transition-colors"
+                      >
+                        Open Managed Events
+                      </button>
+                      <button
+                        onClick={() => navigate('/events/create')}
+                        className="rounded-lg border border-emerald-300 text-emerald-700 dark:text-emerald-300 dark:border-emerald-700 py-2.5 font-medium transition-colors hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                      >
+                        Create Event
+                      </button>
+                    </>
+                  )}
+                  {profile.role === 'admin' && (
+                    <>
+                      <button
+                        onClick={() => navigate('/admin')}
+                        className="rounded-lg bg-violet-600 hover:bg-violet-700 text-white py-2.5 font-medium transition-colors"
+                      >
+                        Open Admin Panel
+                      </button>
+                      <button
+                        onClick={() => navigate('/events')}
+                        className="rounded-lg border border-violet-300 text-violet-700 dark:text-violet-300 dark:border-violet-700 py-2.5 font-medium transition-colors hover:bg-violet-50 dark:hover:bg-violet-900/20"
+                      >
+                        View Events
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

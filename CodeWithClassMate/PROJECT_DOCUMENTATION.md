@@ -1,7 +1,7 @@
-# CodeThrone - Professional Documentation
+# Event-Ease AI Powered College Event Management System - Professional Documentation
 
 ## Overview
-CodeThrone is a full-stack competitive programming and learning platform designed for coders to practice, compete, and collaborate. It features a modern UI, real-time chat, AI-powered interview practice, and a rich set of coding tools. The application is built with React (frontend), Node.js/Express (backend), and integrates with various services for code execution, authentication, and data management.
+EvenEase is the application brand for the Event-Ease AI Powered College Event Management System. It is designed to simplify event planning, registration, communication, certificate generation, and analytics. The application is built with React (frontend), Node.js/Express (backend), and MongoDB, with room for AI-powered assistance and predictive insights.
 
 ---
 

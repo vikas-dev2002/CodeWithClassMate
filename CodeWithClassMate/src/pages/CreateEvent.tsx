@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { API_URL } from "../config/api";
@@ -7,12 +7,25 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { ArrowLeft, CalendarDays, Plus } from "lucide-react";
 
+interface CodingProblem {
+  _id: string;
+  title: string;
+  difficulty: string;
+  tags?: string[];
+}
+
 const CreateEvent: React.FC = () => {
   const { user } = useAuth();
   const { isDark } = useTheme();
   const navigate = useNavigate();
+  const { id: eventId } = useParams<{ id: string }>();
+  const isEditMode = Boolean(eventId);
 
   const [colleges, setColleges] = useState<any[]>([]);
+  const [problems, setProblems] = useState<CodingProblem[]>([]);
+  const [problemsLoading, setProblemsLoading] = useState(false);
+  const [problemSearch, setProblemSearch] = useState("");
+  const [selectedProblemIds, setSelectedProblemIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
     title: "",
@@ -28,26 +41,105 @@ const CreateEvent: React.FC = () => {
     college: "",
   });
 
+  const getCollegeId = (college: unknown): string => {
+    if (!college) return "";
+    if (typeof college === "string") return college;
+    if (typeof college === "object" && college !== null && "_id" in college) {
+      const value = (college as { _id?: unknown })._id;
+      return typeof value === "string" ? value : "";
+    }
+    return "";
+  };
+
   useEffect(() => {
     if (!user || (user.role !== "organiser" && user.role !== "admin")) {
-      toast.error("You must be an organiser to create events");
+      toast.error("You must be an organiser to manage events");
       navigate("/events");
       return;
     }
     fetchColleges();
-  }, [user]);
+    fetchProblems();
+  }, [user, navigate]);
+
+  useEffect(() => {
+    if (!isEditMode || !user) return;
+    fetchEventForEdit();
+  }, [isEditMode, eventId, user]);
 
   const fetchColleges = async () => {
     try {
       const res = await axios.get(`${API_URL}/colleges`);
       setColleges(res.data);
       // Auto-select user's college if available
-      if (user?.college) {
-        setForm((prev) => ({ ...prev, college: user.college }));
+      const collegeId = getCollegeId(user?.college);
+      if (collegeId) {
+        setForm((prev) => ({ ...prev, college: prev.college || collegeId }));
       }
     } catch (error) {
       console.error("Error fetching colleges:", error);
     }
+  };
+
+  const fetchEventForEdit = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/events/${eventId}`);
+      const event = res.data;
+      const contestId =
+        typeof event.contestId === "string" ? event.contestId : event.contestId?._id;
+
+      setForm({
+        title: event.title || "",
+        description: event.description || "",
+        banner: event.banner || "",
+        venue: event.venue || "",
+        date: event.date ? new Date(event.date).toISOString().slice(0, 10) : "",
+        startTime: event.startTime || "",
+        endTime: event.endTime || "",
+        capacity: event.capacity ? String(event.capacity) : "",
+        eventType: event.eventType || "general",
+        tags: Array.isArray(event.tags) ? event.tags.join(", ") : "",
+        college: getCollegeId(event.college) || getCollegeId(user?.college),
+      });
+
+      if (contestId) {
+        try {
+          const contestRes = await axios.get(`${API_URL}/contests/${contestId}`);
+          const contestProblems = Array.isArray(contestRes.data?.problems)
+            ? contestRes.data.problems.map((entry: any) =>
+                typeof entry.problem === "string" ? entry.problem : entry.problem?._id
+              ).filter(Boolean)
+            : [];
+          setSelectedProblemIds(contestProblems);
+        } catch (contestError) {
+          console.error("Error loading linked contest:", contestError);
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to load event details");
+      navigate("/events");
+    }
+  };
+
+  const fetchProblems = async () => {
+    try {
+      setProblemsLoading(true);
+      const res = await axios.get(`${API_URL}/problems?limit=500`);
+      const list = Array.isArray(res.data?.problems) ? res.data.problems : [];
+      setProblems(list);
+    } catch (error) {
+      console.error("Error loading problems:", error);
+      toast.error("Unable to load coding problems");
+    } finally {
+      setProblemsLoading(false);
+    }
+  };
+
+  const toggleProblemSelection = (problemId: string) => {
+    setSelectedProblemIds((prev) =>
+      prev.includes(problemId)
+        ? prev.filter((id) => id !== problemId)
+        : [...prev, problemId]
+    );
   };
 
   const handleChange = (
@@ -61,6 +153,8 @@ const CreateEvent: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const isCodingEvent = form.eventType === "coding_contest" || form.eventType === "hackathon";
+
     if (!form.title || !form.description || !form.venue || !form.date || !form.startTime || !form.endTime || !form.capacity) {
       toast.error("Please fill all required fields");
       return;
@@ -68,6 +162,11 @@ const CreateEvent: React.FC = () => {
 
     if (!form.college) {
       toast.error("Please select a college");
+      return;
+    }
+
+    if (isCodingEvent && selectedProblemIds.length === 0) {
+      toast.error("Coding event ke liye kam se kam 1 problem select karo");
       return;
     }
 
@@ -80,16 +179,27 @@ const CreateEvent: React.FC = () => {
         tags: form.tags
           ? form.tags.split(",").map((t) => t.trim()).filter(Boolean)
           : [],
+        problemIds: isCodingEvent ? selectedProblemIds : [],
       };
 
-      const res = await axios.post(`${API_URL}/events`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      toast.success("Event created successfully!");
-      navigate(`/events/${res.data.event._id}`);
+      if (isEditMode) {
+        await axios.put(`${API_URL}/events/${eventId}`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        toast.success("Event updated successfully!");
+        navigate(`/events/${eventId}`);
+      } else {
+        const res = await axios.post(`${API_URL}/events`, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        toast.success("Event created successfully!");
+        navigate(`/events/${res.data.event._id}`);
+      }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Failed to create event");
+      toast.error(
+        error.response?.data?.message ||
+          (isEditMode ? "Failed to update event" : "Failed to create event")
+      );
     } finally {
       setSubmitting(false);
     }
@@ -104,6 +214,16 @@ const CreateEvent: React.FC = () => {
   const labelClass = `block text-sm font-medium mb-1.5 ${
     isDark ? "text-gray-300" : "text-gray-700"
   }`;
+
+  const filteredProblems = problems.filter((problem) => {
+    if (!problemSearch.trim()) return true;
+    const query = problemSearch.toLowerCase();
+    return (
+      problem.title?.toLowerCase().includes(query) ||
+      problem.difficulty?.toLowerCase().includes(query) ||
+      (problem.tags || []).some((tag) => tag.toLowerCase().includes(query))
+    );
+  });
 
   return (
     <div className="min-h-screen px-4 py-8 max-w-3xl mx-auto">
@@ -126,7 +246,7 @@ const CreateEvent: React.FC = () => {
             isDark ? "text-white" : "text-gray-900"
           }`}
         >
-          Create New Event
+          {isEditMode ? "Edit Event" : "Create New Event"}
         </h1>
       </div>
 
@@ -306,6 +426,60 @@ const CreateEvent: React.FC = () => {
           />
         </div>
 
+        {(form.eventType === "coding_contest" || form.eventType === "hackathon") && (
+          <div>
+            <label className={labelClass}>
+              Select Coding Problems <span className="text-red-500">*</span>
+            </label>
+            <p className={`mb-3 text-xs ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+              Selected: {selectedProblemIds.length} problem(s)
+            </p>
+            <input
+              type="text"
+              value={problemSearch}
+              onChange={(e) => setProblemSearch(e.target.value)}
+              placeholder="Search by title, difficulty, or tag"
+              className={`${inputClass} mb-3`}
+            />
+            <div className={`max-h-64 overflow-y-auto rounded-lg border ${
+              isDark ? "border-gray-700 bg-gray-900/40" : "border-gray-200 bg-gray-50"
+            }`}>
+              {problemsLoading ? (
+                <div className={`p-4 text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                  Loading problems...
+                </div>
+              ) : filteredProblems.length === 0 ? (
+                <div className={`p-4 text-sm ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                  No problems found.
+                </div>
+              ) : (
+                filteredProblems.map((problem) => (
+                  <label
+                    key={problem._id}
+                    className={`flex cursor-pointer items-start gap-3 border-b px-4 py-3 last:border-b-0 ${
+                      isDark ? "border-gray-700 text-gray-200" : "border-gray-200 text-gray-800"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedProblemIds.includes(problem._id)}
+                      onChange={() => toggleProblemSelection(problem._id)}
+                      className="mt-1 h-4 w-4"
+                    />
+                    <div className="min-w-0">
+                      <div className="font-medium">{problem.title}</div>
+                      <div className={`mt-1 text-xs ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                        {problem.difficulty}
+                        {problem.tags?.length ? ` • ${problem.tags.slice(0, 3).join(", ")}` : ""}
+                      </div>
+                    </div>
+                  </label>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Submit */}
         <button
           type="submit"
@@ -313,7 +487,13 @@ const CreateEvent: React.FC = () => {
           className="w-full flex items-center justify-center gap-2 py-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50"
         >
           <Plus size={18} />
-          {submitting ? "Creating..." : "Create Event"}
+          {submitting
+            ? isEditMode
+              ? "Updating..."
+              : "Creating..."
+            : isEditMode
+            ? "Update Event"
+            : "Create Event"}
         </button>
       </form>
     </div>

@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "seed:lucknow-colleges": "node scripts/seedLucknowColleges.js",
+    "seed:full-flow": "node scripts/seedFullFlowData.js",
+    "seed:demo-dsa-event": "node scripts/addDemoDsaEvent.js"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.6",

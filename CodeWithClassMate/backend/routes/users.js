@@ -4,6 +4,13 @@ import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
+const requireAdmin = (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+  return next();
+};
+
 // GET /api/users/contest-leaderboard - Contest leaderboard (MOVED TO TOP)
 router.get('/contest-leaderboard', async (req, res) => {
   try {
@@ -296,6 +303,40 @@ router.get('/', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('❌ [USERS] Error fetching users:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// POST /api/users/:id/make-organiser - Admin only
+router.post('/:id/make-organiser', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.role = 'organiser';
+    await user.save();
+
+    return res.json({ message: 'User promoted to organiser', user });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
+// POST /api/users/:id/remove-organiser - Admin only
+router.post('/:id/remove-organiser', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.role = 'user';
+    await user.save();
+
+    return res.json({ message: 'Organiser role removed', user });
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 

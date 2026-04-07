@@ -69,7 +69,7 @@ const Navbar: React.FC = () => {
             <span className={`text-xl font-bold ${
               isDark ? 'text-white' : 'text-gray-900'
             }`}>
-              EventHub
+              Event-Ease
             </span>
           </Link>
 
@@ -187,6 +187,21 @@ const Navbar: React.FC = () => {
                           Admin Dashboard
                         </Link>
                       )}
+
+                      {user.role === 'organiser' && (
+                        <Link
+                          to="/create-event"
+                          className={`flex items-center px-4 py-2 text-sm transition-colors ${
+                            isDark
+                              ? 'text-gray-300 hover:bg-gray-700'
+                              : 'text-gray-700 hover:bg-gray-50'
+                          }`}
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <CalendarDays className="h-4 w-4 mr-3" />
+                          Manage Events
+                        </Link>
+                      )}
                       
                       <Link
                         to={`/profile/${user.username}`}
@@ -271,7 +286,7 @@ const Navbar: React.FC = () => {
                 >
                   <CalendarDays className="h-8 w-8 text-orange-600" />
                   <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                    EventHub
+                    Event-Ease
                   </span>
                 </Link>
                 <button
@@ -345,6 +360,21 @@ const Navbar: React.FC = () => {
                     >
                       <Shield className="h-4 w-4 mr-3" />
                       Admin
+                    </Link>
+                  )}
+
+                  {user.role === 'organiser' && (
+                    <Link
+                      to="/create-event"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={`flex items-center px-4 py-3 rounded-lg text-sm font-medium transition-colors duration-200 ${
+                        isDark
+                          ? 'text-gray-300 hover:text-white hover:bg-gray-800'
+                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                      }`}
+                    >
+                      <CalendarDays className="h-4 w-4 mr-3" />
+                      Manage Events
                     </Link>
                   )}
                   

@@ -315,6 +315,16 @@ const EventDetail: React.FC = () => {
   const isPast = new Date(event.date) < new Date();
   const isCreator =
     event.createdBy?._id === user?.id || event.createdBy?._id === user?._id;
+  const userCollegeId =
+    typeof user?.college === "string" ? user.college : user?.college?._id;
+  const eventCollegeId =
+    typeof event.college === "string" ? event.college : event.college?._id;
+  const isSameCollegeOrganiser =
+    user?.role === "organiser" &&
+    !!userCollegeId &&
+    !!eventCollegeId &&
+    userCollegeId === eventCollegeId;
+  const canManageThisEvent = isCreator || isSameCollegeOrganiser || user?.role === "admin";
   const isOrganiserOrAdmin =
     user?.role === "organiser" || user?.role === "admin";
   const attendedCount =
@@ -468,7 +478,7 @@ const EventDetail: React.FC = () => {
                   {event.description}
                 </p>
               </div>
-              {isCreator && (
+              {canManageThisEvent && (
                 <div className="flex gap-2 shrink-0">
                   <button
                     onClick={() => navigate(`/events/${id}/edit`)}
@@ -552,11 +562,20 @@ const EventDetail: React.FC = () => {
                     <p className={`text-sm mb-2 ${isDark ? "text-gray-400" : "text-gray-600"}`}>
                       Your QR Token (show this for attendance):
                     </p>
-                    <div className="flex items-center gap-3">
-                      <QrCode className="text-orange-500" size={20} />
-                      <code className={`text-sm font-mono break-all ${isDark ? "text-green-400" : "text-green-700"}`}>
-                        {qrToken}
-                      </code>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                      {qrToken && (
+                        <img
+                          src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(qrToken)}`}
+                          alt="Event attendance QR code"
+                          className="w-36 h-36 rounded-lg border border-orange-300/40 bg-white p-2"
+                        />
+                      )}
+                      <div className="flex items-center gap-3">
+                        <QrCode className="text-orange-500" size={20} />
+                        <code className={`text-sm font-mono break-all ${isDark ? "text-green-400" : "text-green-700"}`}>
+                          {qrToken}
+                        </code>
+                      </div>
                     </div>
                   </div>
 
@@ -606,7 +625,7 @@ const EventDetail: React.FC = () => {
           )}
 
           {/* Attendance Scanner (Organiser/Admin) */}
-          {isOrganiserOrAdmin && (
+          {canManageThisEvent && (
             <div className={`rounded-xl border p-6 mb-6 ${isDark ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
               <h3 className={`text-lg font-semibold mb-4 flex items-center gap-2 ${isDark ? "text-white" : "text-gray-900"}`}>
                 <QrCode className="text-orange-500" size={20} /> Mark Attendance
@@ -635,7 +654,7 @@ const EventDetail: React.FC = () => {
           )}
 
           {/* Attendees List */}
-          {isOrganiserOrAdmin && event.registrations?.length > 0 && (
+          {canManageThisEvent && event.registrations?.length > 0 && (
             <div className={`rounded-xl border p-6 ${isDark ? "bg-gray-800/50 border-gray-700" : "bg-white border-gray-200"}`}>
               <button
                 onClick={() => setShowAttendees(!showAttendees)}

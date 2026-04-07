@@ -1,6 +1,6 @@
-# CodeThrone - Your Coder Army
+# Event-Ease AI Powered College Event Management System
 
-Welcome to **CodeThrone**, a comprehensive platform designed to enhance coding, collaboration, and learning through interactive contests, discussions, and real-time chat features. This project is built with modern web technologies and follows best practices for scalability, maintainability, and user experience.
+Welcome to **EvenEase**, the working brand for the **Event-Ease AI Powered College Event Management System**, designed to streamline event creation, registration, communication, certificate generation, and analytics through a centralized web platform.
 
 ---
 
@@ -20,7 +20,7 @@ Welcome to **CodeThrone**, a comprehensive platform designed to enhance coding, 
 ---
 
 ## Overview
-**CodeThrone** is a full-stack web application that brings together competitive programming, collaborative problem-solving, and social interaction. Users can participate in coding contests, discuss solutions, chat in real-time, and track their progress. The platform is ideal for students, professionals, and coding enthusiasts looking to improve their skills and connect with others.
+**EvenEase** is a full-stack web application focused on college event operations. It helps admins, event coordinators, and students manage event discovery, registrations, updates, certificates, and event insights from one platform with AI-enhanced assistance.
 
 ---
 
@@ -71,8 +71,8 @@ root/
 ## Setup & Installation
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/CodingEnthusiastic/CodeThrone.git
-   cd CodeThrone
+   git clone https://github.com/CodingEnthusiastic/EvenEase.git
+   cd EvenEase
    ```
 2. **Install Dependencies:**
    - Backend:
@@ -87,7 +87,7 @@ root/
      ```
 3. **Environment Variables:**
 
-   in /CodeThrone , create a .env file with these details
+   in `/EvenEase`, create a `.env` file with these details
    
    MONGODB_URI=
    

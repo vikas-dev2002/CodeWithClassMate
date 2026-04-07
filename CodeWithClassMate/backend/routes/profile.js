@@ -2,6 +2,8 @@ import express from 'express';
 import multer from 'multer';
 import User from '../models/User.js';
 import Problem from '../models/Problem.js';
+import Event from '../models/Event.js';
+import College from '../models/College.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -38,6 +40,7 @@ router.get('/:username', async (req, res) => {
       username: username
     })
       .select('-password')
+      .populate('college', 'name city state code logo')
       .populate('solvedProblems', 'title difficulty')
       .populate('gameHistory.opponent', 'username')
       .populate('gameHistory.problem', 'title difficulty')
@@ -53,6 +56,7 @@ router.get('/:username', async (req, res) => {
         username: { $regex: new RegExp(`^${username}$`, 'i') }
       })
         .select('-password')
+        .populate('college', 'name city state code logo')
         .populate('solvedProblems', 'title difficulty')
         .populate('gameHistory.opponent', 'username')
         .populate('gameHistory.problem', 'title difficulty')
@@ -232,6 +236,71 @@ router.get('/:username', async (req, res) => {
     
     // Get total problems count
     const totalProblemsCount = await Problem.countDocuments();
+    let roleSummary = null;
+
+    if (user.role === 'user') {
+      const registeredEventIds = (user.registeredEvents || []).map((entry) => entry.eventId).filter(Boolean);
+      const registeredEventsCount = registeredEventIds.length;
+      const attendedEventsCount = (user.registeredEvents || []).filter((entry) => entry.attended).length;
+      const upcomingRegisteredCount = registeredEventIds.length
+        ? await Event.countDocuments({ _id: { $in: registeredEventIds }, date: { $gte: new Date() } })
+        : 0;
+
+      roleSummary = {
+        dashboardTitle: 'Student event profile',
+        registeredEventsCount,
+        attendedEventsCount,
+        upcomingRegisteredCount,
+        certificateEligibleCount: attendedEventsCount
+      };
+    }
+
+    if (user.role === 'organiser') {
+      const organiserFilter = user.college?._id
+        ? {
+            $or: [
+              { createdBy: user._id },
+              { college: user.college._id }
+            ]
+          }
+        : { createdBy: user._id };
+
+      const managedEvents = await Event.find(organiserFilter).select('registrations isActive date createdBy college');
+      const uniqueEventIds = new Set(managedEvents.map((event) => event._id.toString()));
+      const sameCollegeCount = user.college?._id
+        ? await Event.countDocuments({ college: user.college._id })
+        : managedEvents.length;
+
+      roleSummary = {
+        dashboardTitle: 'Organiser management profile',
+        managedEventsCount: uniqueEventIds.size,
+        activeManagedEventsCount: managedEvents.filter((event) => event.isActive).length,
+        collegeEventsCount: sameCollegeCount,
+        totalRegistrationsManaged: managedEvents.reduce((sum, event) => sum + (event.registrations?.length || 0), 0),
+        upcomingManagedEventsCount: managedEvents.filter((event) => new Date(event.date) >= new Date()).length
+      };
+    }
+
+    if (user.role === 'admin') {
+      const [totalUsers, totalStudents, totalOrganisers, totalEvents, activeEvents, totalColleges] = await Promise.all([
+        User.countDocuments(),
+        User.countDocuments({ role: 'user' }),
+        User.countDocuments({ role: 'organiser' }),
+        Event.countDocuments(),
+        Event.countDocuments({ isActive: true }),
+        College.countDocuments()
+      ]);
+
+      roleSummary = {
+        dashboardTitle: 'Admin control profile',
+        totalUsers,
+        totalStudents,
+        totalOrganisers,
+        totalEvents,
+        activeEvents,
+        totalColleges
+      };
+    }
     
     console.log('📊 Final user stats:', {
       username: user.username,
@@ -247,7 +316,8 @@ router.get('/:username', async (req, res) => {
     // Add total problems count to the response
     const responseData = {
       ...user.toObject(),
-      totalProblemsCount: totalProblemsCount
+      totalProblemsCount: totalProblemsCount,
+      roleSummary
     };
     
     res.json(responseData);

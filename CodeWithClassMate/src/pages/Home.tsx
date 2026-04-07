@@ -797,7 +797,7 @@ const Home: React.FC = () => {
           <div className="animate-spin rounded-full h-32 w-32 border-4 border-t-transparent border-orange-600 mx-auto"></div>
           <Trophy className="text-orange-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" size={40} />
         </div>
-        <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">Loading <span className="text-orange-600">CodeThrone</span>...</h2>
+        <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">Loading <span className="text-orange-600">EvenEase</span>...</h2>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">This will take 15 seconds</p>
         <p className="italic text-sm text-gray-600 dark:text-gray-300 transition-all duration-500">{tips[tipIndex]}</p>
       </div>
@@ -2540,7 +2540,7 @@ const Home: React.FC = () => {
                   <Code className="h-8 w-8 text-white" />
                 </div>
                 <span className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  CodeThrone
+                  EvenEase
                 </span>
               </div>
               <p className="text-gray-300 mb-8 max-w-md text-lg leading-relaxed">
@@ -2621,7 +2621,7 @@ const Home: React.FC = () => {
           </div>
 
           <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">© 2025 CodeWithClassMate. All rights reserved. Built with ❤️ for developers.</p>
+            <p className="text-gray-400 text-sm">© 2025 EvenEase. All rights reserved. Built for smarter college event management.</p>
             <div className="flex space-x-8 mt-4 md:mt-0">
               {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((link, index) => (
                 <a

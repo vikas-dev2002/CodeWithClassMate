@@ -100,7 +100,7 @@ const Home: React.FC = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-            Loading CodeWithClassMate...
+            Loading EvenEase...
           </p>
         </div>
       </div>
@@ -404,7 +404,7 @@ const Home: React.FC = () => {
             <h2 className={`text-3xl sm:text-4xl font-bold mb-4 ${
               isDark ? 'text-white' : 'text-gray-900'
             }`}>
-              CodeWithClassMate is Different!
+              EvenEase is Different!
             </h2>
             <p className={`text-lg max-w-3xl mx-auto ${
               isDark ? 'text-gray-300' : 'text-gray-600'

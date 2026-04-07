@@ -9,6 +9,14 @@ interface User {
   username: string;
   email: string;
   role: string;
+  college?: {
+    _id?: string;
+    name?: string;
+    city?: string;
+    state?: string;
+    code?: string;
+    logo?: string;
+  } | string | null;
   coins?: number; // Add coins field
   totalCoinsEarned?: number; // Add total coins earned field for future use
   profile?: {

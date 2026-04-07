@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import Navbar from "./components/Navbar";
-// Home page is now Events - keeping import for /home legacy route
-import Home from "./pages/Home";
+// Dedicated event-focused home page for /home
+import Home from "./pages/EventHome";
 import Problems from "./pages/Problems";
 import ProblemDetail from "./pages/ProblemDetail";
 import Discussion from "./pages/Discussion";
@@ -16,16 +16,15 @@ import Contest from "./pages/Contest";
 import Interview from "./pages/Interview";
 import Profile from "./pages/Profile";
 import Login from "./pages/Login";
-import Register from "./pages/Register";
+import RoleRegister from "./pages/RoleRegister";
 import Redeem from "./pages/Redeem";
 import CompanyProblems from "./pages/CompanyProblems";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AdminDashboard from "./pages/Admin/EventAdminDashboard";
+import ProtectedRoute, { OrganiserRoute } from "./components/ProtectedRoute";
 import ContestProblems from "./pages/ContestProblems";
 import ContestProblemDetail from "./pages/ContestProblemDetail";
 import Announcements from "./pages/Announcements";
 import AnnounceDetail from "./pages/AnnounceDetail";
-import OAuthHandler from "./pages/OAuthHandler";
 import Chat from "./pages/Chat";
 import ContestLeaderboard from "./pages/ContestLeaderboard";
 import GameLeaderboard from "./pages/GameLeaderboard";
@@ -36,6 +35,7 @@ import ViewDocument from "./pages/ViewDocument";
 import Events from "./pages/Events";
 import EventDetail from "./pages/EventDetail";
 import CreateEvent from "./pages/CreateEvent";
+import Unauthorized from "./pages/Unauthorized";
 import { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
@@ -72,7 +72,7 @@ const AppRoutes = () => {
             />
           </div>
           <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-200 mb-2">
-            Loading <span className="text-orange-600">EventHub</span>
+            Loading <span className="text-orange-600">Event-Ease</span>
             ...
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
@@ -491,10 +491,10 @@ const AppRoutes = () => {
         <Navbar />
         <div className="pt-0 relative z-10">
           <Routes>
-            <Route path="/" element={<Events />} />
+            <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<RoleRegister />} />
             <Route path="/problems" element={<Problems />} />
             <Route path="/problems/:id" element={<ProblemDetail />} />
             <Route path="/chats" element={<Chat />} />
@@ -623,14 +623,22 @@ const AppRoutes = () => {
             <Route
               path="/events/create"
               element={
-                <ProtectedRoute>
+                <OrganiserRoute>
                   <CreateEvent />
-                </ProtectedRoute>
+                </OrganiserRoute>
               }
             />
+            <Route
+              path="/events/:id/edit"
+              element={
+                <OrganiserRoute>
+                  <CreateEvent />
+                </OrganiserRoute>
+              }
+            />
+            <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/announcements" element={<Announcements />} />
             <Route path="/announcements/:id" element={<AnnounceDetail />} />
-            <Route path="/oauth" element={<OAuthHandler />} />
           </Routes>
         </div>
       </div>
