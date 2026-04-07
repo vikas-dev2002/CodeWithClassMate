@@ -44,11 +44,31 @@ console.log("- JWT_SECRET exists:", !!process.env.JWT_SECRET)
 
 const app = express()
 const server = createServer(app)
+const defaultOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "https://codethrone.netlify.app",
+]
+const configuredOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+const frontendUrl = process.env.FRONTEND_URL?.trim()
+if (frontendUrl) configuredOrigins.push(frontendUrl)
+const allowedOrigins = [...new Set([...defaultOrigins, ...configuredOrigins])]
+const corsOriginValidator = (origin, callback) => {
+  if (!origin || allowedOrigins.includes(origin)) {
+    callback(null, true)
+    return
+  }
+  callback(new Error(`Origin ${origin} is not allowed by CORS`))
+}
 
 // ✅ Enhanced Socket.IO configuration with better error handling
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "https://codethrone.netlify.app"],
+    origin: corsOriginValidator,
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -65,7 +85,7 @@ console.log("🌐 Express app and Socket.IO server created with enhanced configu
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "https://codethrone.netlify.app"],
+    origin: corsOriginValidator,
     credentials: true,
   }),
 )
@@ -203,14 +223,16 @@ io.on("connection", (socket) => {
 })
 
 const PORT = process.env.PORT || 5000
+const publicBaseUrl = process.env.PUBLIC_BASE_URL || process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`
+const selfPingUrl = process.env.SELF_PING_URL || `${publicBaseUrl}/api/health`
 server.listen(PORT, async () => {
   console.log("🎉 Server is running successfully!")
-  console.log(`📍 Server URL: https://codestar-qlq6.onrender.com`)
-  console.log(`🏥 Health check: https://codestar-qlq6.onrender.com/api/health`)
+  console.log(`📍 Server URL: ${publicBaseUrl}`)
+  console.log(`🏥 Health check: ${publicBaseUrl}/api/health`)
   console.log("📡 Socket.IO enabled for real-time features")
   console.log("🔥 Ready to accept requests!")
   console.log("🔌 Socket.IO transports: websocket, polling")
-  console.log("🔌 Socket.IO CORS origins: localhost:5173, codethrone.netlify.app")
+  console.log("🔌 Socket.IO CORS origins:", allowedOrigins.join(", "))
 
   // Initialize contest status and rating updates
   console.log("🏆 Initializing contest rating system...")
@@ -220,7 +242,7 @@ server.listen(PORT, async () => {
 
 setInterval(async () => {
   try {
-    const res = await axios.get("https://codestar-qlq6.onrender.com/api/health")
+    const res = await axios.get(selfPingUrl)
     console.log(`🔄 Self-ping at ${new Date().toISOString()} | status: ${res.data.status}`)
   } catch (error) {
     console.error("⚠️ Self-ping failed:", error.message)

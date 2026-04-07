@@ -11,8 +11,7 @@ import path from "path"
 console.log("🔑 Environment check:")
 console.log("NODE_ENV:", process.env.NODE_ENV)
 console.log("GEMINI_API_KEY exists:", !!process.env.GEMINI_API_KEY)
-console.log("GEMINI_API_KEY length:", process.env.GEMINI_API_KEY?.length || 0)
-console.log("GEMINI_API_KEY first 10 chars:", process.env.GEMINI_API_KEY?.substring(0, 10) || "undefined")
+console.log("GEMINI_API_KEY configured:", !!process.env.GEMINI_API_KEY)
 
 const router = express.Router()
 
@@ -45,7 +44,6 @@ const upload = multer({
 
 // Initialize Gemini AI - Use the GoogleGenerativeAI SDK instead of direct API calls
 let genAI = null
-console.log(process.env.GEMINI_API_KEY);
 if (process.env.GEMINI_API_KEY!=null && process.env.GEMINI_API_KEY.length > 0) {
   genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   console.log("🤖 Gemini AI SDK initialized successfully")
