@@ -2,9 +2,9 @@
 export const API_CONFIG = {
   // Use environment variables with fallback to localhost for development, production for production
   BASE_URL: import.meta.env.VITE_API_URL || 
-    (import.meta.env.MODE === 'development' ? 'http://localhost:5000/api' : 'https://codestar-qlq6.onrender.com/api'),
+    (import.meta.env.MODE === 'development' ? 'http://localhost:5000/api' : 'https://codewithclassmate.onrender.com/api'),
   SOCKET_URL: import.meta.env.VITE_SOCKET_URL || 
-    (import.meta.env.MODE === 'development' ? 'http://localhost:5000' : 'https://codestar-qlq6.onrender.com'),
+    (import.meta.env.MODE === 'development' ? 'http://localhost:5000' : 'https://codewithclassmate.onrender.com'),
 };
 
 // Helper function to get full API URL
